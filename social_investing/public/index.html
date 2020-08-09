@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="socialApp">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>Social Investing</title>
+
+  <!-- Custom fonts for this template-->
+  <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+  <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+  <script src="https://npmcdn.com/tether@1.2.4/dist/js/tether.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js"></script>
+  <!-- Custom styles for this template-->
+  <link href="css/sb-admin-2.css" rel="stylesheet">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.7.5/angular.min.js" integrity="sha256-QRJz3b0/ZZC4ilKmBRRjY0MgnVhQ+RR1tpWLYaRRjSo="
+  crossorigin="anonymous"></script>
+  <script src="/js/services/restService.js"></script>
+  <script src="/js/controllers/indexController.js"></script>
+
+</head>
+
+<body id="page-top"style="overflow-y:hidden" ng-controller="IndexController">
+
+  <!-- Page Wrapper -->
+  <div id="wrapper" >
+
+    <!-- Sidebar -->
+    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar" style="overflow:hidden">
+
+      <!-- Sidebar - Brand -->
+      <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+          <div class="sidebar-brand-icon rotate-n-15"></div>
+              <i class="fas fa-money-bill-wave"></i>
+          <div class="sidebar-brand-text mx-3">Social Investing</div>
+              <i class="fas fa-money-bill-wave"></i>
+      </a>
+
+      <!-- Divider -->
+      <hr class="sidebar-divider my-0">
+
+      <!-- Divider -->
+      <hr class="sidebar-divider">
+
+      <!-- Heading -->
+      <div class="sidebar-heading">
+        Personal
+      </div>
+
+      <!-- Nav Item - Pages Collapse Menu -->
+      <li class="nav-item">
+        <a ng-click="changeToIndex()" class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+          <i class="fas fa-folder"></i>
+          <span>My Portfolio</span>
+        </a>
+      </li>
+
+
+
+
+      <!-- Nav Item - Utilities Collapse Menu -->
+      <!-- Divider -->
+      <hr class="sidebar-divider">
+      <div class="sidebar-heading">
+          Extra
+      </div>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" ng-click="changeToBrowser()" href="#" data-toggle="collapse" data-target="#collapseUtilities" aria-expanded="true" aria-controls="collapseUtilities">
+          <i class="fas fa-folder-open"></i>
+          <span>Browse Portfolios</span>
+        </a>
+      </li>
+
+      <!-- Heading -->
+      <!-- Nav Item - Pages Collapse Menu -->
+      <li class="nav-item">
+        <a ng-click="changeToFriends()" class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages" aria-expanded="true" aria-controls="collapsePages">
+          <i class="fas fa-fw fa-users"></i>
+          <span>Friends</span>
+        </a>
+      </li>
+
+      <!-- Divider -->
+      <hr class="sidebar-divider d-none d-md-block">
+
+      <!-- Sidebar Toggler (Sidebar) -->
+      <div class="text-center d-none d-md-inline">
+        <button class="rounded-circle border-0" id="sidebarToggle"></button>
+      </div>
+    </ul>
+    <!-- End of Sidebar -->
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+
+      <!-- Main Content -->
+      <div ng-show="indexPage" id="content" style="overflow-y:auto;height:100vh">
+
+        <!-- Topbar -->
+        <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+
+          <!-- Sidebar Toggle (Topbar) -->
+          <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+            <i class="fa fa-bars"></i>
+          </button>
+
+          <!-- Topbar Search -->
+          <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+            <div class="input-group">
+              <input list="stockDataList" type="text" class="form-control bg-light border-0 small" ng-model="stockSearch" ng-value="" placeholder="Search for stocks" aria-label="Search" aria-describedby="basic-addon2">
+              <datalist id="stockDataList">
+                <option ng-repeat="stock in searchStocks | limitTo:5" value={{stock}}>
+              </datalist>
+              <div class="input-group-append">
+                <button class="btn btn-primary" type="button">
+                  <i class="fas fa-search fa-sm"></i>
+                </button>
+              </div>
+            </div>
+          </form>
+
+          <!-- Topbar Navbar -->
+          <ul class="navbar-nav ml-auto">
+
+            <!-- Nav Item - Search Dropdown (Visible Only XS) -->
+            <li class="nav-item dropdown no-arrow d-sm-none">
+              <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fas fa-search fa-fw"></i>
+              </a>
+              <!-- Dropdown - Messages -->
+              <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in" aria-labelledby="searchDropdown">
+                <form class="form-inline mr-auto w-100 navbar-search">
+                  <div class="input-group">
+                    <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2">
+                    <div class="input-group-append">
+                      <button class="btn btn-primary" type="button">
+                        <i class="fas fa-search fa-sm"></i>
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </li>
+
+            <nav class="navbar navbar-default">
+                <div class="container">
+
+
+            <!-- Nav Item - Alerts
+            <li class="nav-item dropdown no-arrow mx-1">
+              <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fas fa-bell fa-fw"></i>
+               
+                <span class="badge badge-danger badge-counter">3+</span>
+              </a>
+            
+              <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="alertsDropdown">
+                <h6 class="dropdown-header">
+                  Alerts Center
+                </h6>
+                <a class="dropdown-item d-flex align-items-center" href="#">
+                  <div class="mr-3">
+                    <div class="icon-circle bg-primary">
+                      <i class="fas fa-file-alt text-white"></i>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="small text-gray-500">December 12, 2019</div>
+                    <span class="font-weight-bold">A new monthly report is ready to download!</span>
+                  </div>
+                </a>
+                <a class="dropdown-item d-flex align-items-center" href="#">
+                  <div class="mr-3">
+                    <div class="icon-circle bg-success">
+                      <i class="fas fa-donate text-white"></i>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="small text-gray-500">December 7, 2019</div>
+                    $290.29 has been deposited into your account!
+                  </div>
+                </a>
+                <a class="dropdown-item d-flex align-items-center" href="#">
+                  <div class="mr-3">
+                    <div class="icon-circle bg-warning">
+                      <i class="fas fa-exclamation-triangle text-white"></i>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="small text-gray-500">December 2, 2019</div>
+                    Spending Alert: We've noticed unusually high spending for your account.
+                  </div>
+                </a>
+                <a class="dropdown-item text-center small text-gray-500" href="#">Show All Alerts</a>
+              </div>
+            </li>
+
+           
+            <li class="nav-item dropdown no-arrow mx-1">
+              <a class="nav-link dropdown-toggle" href="#" id="messagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fas fa-envelope fa-fw"></i>
+                
+                <span class="badge badge-danger badge-counter">7</span>
+              </a>
+             
+              <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="messagesDropdown">
+                <h6 class="dropdown-header">
+                  Message Center
+                </h6>
+                <a class="dropdown-item d-flex align-items-center" href="#">
+                  <div class="dropdown-list-image mr-3">
+                    <img class="rounded-circle" src="https://source.unsplash.com/fn_BT9fwg_E/60x60" alt="">
+                    <div class="status-indicator bg-success"></div>
+                  </div>
+                  <div class="font-weight-bold">
+                    <div class="text-truncate">Hi there! I am wondering if you can help me with a problem I've been having.</div>
+                    <div class="small text-gray-500">Emily Fowler · 58m</div>
+                  </div>
+                </a>
+                <a class="dropdown-item d-flex align-items-center" href="#">
+                  <div class="dropdown-list-image mr-3">
+                    <img class="rounded-circle" src="https://source.unsplash.com/AU4VPcFN4LE/60x60" alt="">
+                    <div class="status-indicator"></div>
+                  </div>
+                  <div>
+                    <div class="text-truncate">I have the photos that you ordered last month, how would you like them sent to you?</div>
+                    <div class="small text-gray-500">Jae Chun · 1d</div>
+                  </div>
+                </a>
+                <a class="dropdown-item d-flex align-items-center" href="#">
+                  <div class="dropdown-list-image mr-3">
+                    <img class="rounded-circle" src="https://source.unsplash.com/CS2uCrpNzJY/60x60" alt="">
+                    <div class="status-indicator bg-warning"></div>
+                  </div>
+                  <div>
+                    <div class="text-truncate">Last month's report looks great, I am very happy with the progress so far, keep up the good work!</div>
+                    <div class="small text-gray-500">Morgan Alvarez · 2d</div>
+                  </div>
+                </a>
+                <a class="dropdown-item d-flex align-items-center" href="#">
+                  <div class="dropdown-list-image mr-3">
+                    <img class="rounded-circle" src="https://source.unsplash.com/Mv9hjnEUHR4/60x60" alt="">
+                    <div class="status-indicator bg-success"></div>
+                  </div>
+                  <div>
+                    <div class="text-truncate">Am I a good boy? The reason I ask is because someone told me that people say this to all dogs, even if they aren't good...</div>
+                    <div class="small text-gray-500">Chicken the Dog · 2w</div>
+                  </div>
+                </a>
+                <a class="dropdown-item text-center small text-gray-500" href="#">Read More Messages</a>
+              </div>
+            </li> -->
+
+            <!-- <div class="topbar-divider d-none d-sm-block"></div> -->
+
+            <!-- Nav Item - User Information -->
+            <li class="nav-item dropdown no-arrow">
+              <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Valerie Luna</span>
+                <img class="img-profile rounded-circle" src="https://source.unsplash.com/QAB-WJcbgJk/60x60">
+              </a>
+              <!-- Dropdown - User Information -->
+              <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                <a class="dropdown-item" href="#">
+                  <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Profile
+                </a>
+                <a class="dropdown-item" href="#">
+                  <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Settings
+                </a>
+                <a class="dropdown-item" href="#">
+                  <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Activity Log
+                </a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                  <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Logout
+                </a>
+              </div>
+            </li>
+
+          </div></nav></ul>
+
+        </nav>
+        <!-- End of Topbar -->
+
+        <!-- Begin Page Content -->
+        <div class="container-fluid">
+
+          <!-- Page Heading -->
+          <div class="d-sm-flex align-items-center justify-content-between mb-4">
+              <h1 ng-cloak class="h3 mb-0 text-gray-800">Portfolio Value: ${{formatNumber(totalPortfolioValue)}}</span></h1>
+            <h1 ng-cloak class="h3 mb-0 text-gray-800">Returns in Last Year: <span ng-style="returnStyle(return)">{{formatNumber(percentageReturn)}}%</span></h1>
+
+          </div>
+
+          <!-- Content Row -->
+
+          <!-- Content Row -->
+
+          <div class="row">
+
+            <!-- Area Chart -->
+            <div class="col-xl-8 col-lg-7">
+              <div class="card shadow mb-4">
+                <!-- Card Header - Dropdown -->
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                  <h6 class="m-0 font-weight-bold text-primary">Earnings Overview</h6>
+                  <div class="dropdown no-arrow">
+                    <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+                      <div class="dropdown-header">Dropdown Header:</div>
+                      <a class="dropdown-item" href="#">Action</a>
+                      <a class="dropdown-item" href="#">Another action</a>
+                      <div class="dropdown-divider"></div>
+                      <a class="dropdown-item" href="#">Something else here</a>
+                    </div>
+                  </div>
+                </div>
+                <!-- Card Body -->
+                <div class="card-body">
+                  <div class="chart-area"><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
+                    <canvas id="myAreaChart" width="1244" height="640" class="chartjs-render-monitor" style="display: block; height: 320px; width: 622px;"></canvas>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Pie Chart -->
+            <div class="col-xl-4 col-lg-5">
+              <div class="card shadow mb-4">
+                <!-- Card Header - Dropdown -->
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                  <h6 class="m-0 font-weight-bold text-primary">Revenue Sources</h6>
+                  <div class="dropdown no-arrow">
+                    <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(17px, 19px, 0px);">
+                      <div class="dropdown-header">Dropdown Header:</div>
+                      <a class="dropdown-item" href="#">Action</a>
+                      <a class="dropdown-item" href="#">Another action</a>
+                      <div class="dropdown-divider"></div>
+                      <a class="dropdown-item" href="#">Something else here</a>
+                    </div>
+                  </div>
+                </div>
+                <!-- Card Body -->
+                <div class="card-body">
+                  <div class="chart-pie pt-4 pb-2"><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
+                    <canvas id="myPieChart" width="556" height="490" class="chartjs-render-monitor" style="display: block; height: 245px; width: 278px;"></canvas>
+                  </div>
+                  <div class="mt-4 text-center small">
+                    <span class="mr-2">
+                      <i class="fas fa-circle text-primary"></i> Direct
+                    </span>
+                    <span class="mr-2">
+                      <i class="fas fa-circle text-success"></i> Social
+                    </span>
+                    <span class="mr-2">
+                      <i class="fas fa-circle text-info"></i> Referral
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Content Row -->
+          <div class="row">
+
+            <!-- Content Column -->
+          <table class="row table-bordered table-light table striped table-responsive-sm" style="margin-left:12px;width:98%">
+    <tbody><tr>
+        <th class="table-blue">Stock Name</th>
+        <th class="table-blue">Average Cost</th>
+        <th class="table-blue">Number of Shares</th>
+        <th class="table-blue">Equity</th>
+        <th class="table-blue">Weight</th>
+    </tr>
+    <tr ng-repeat="portStock in portfolioStocks">
+        <td><a href="#" ng-click="changeToStock(portStock.name)">{{portStock.name}}</a></td>
+        <td>${{formatNumber(portStock.avgCost)}}</td>
+        <td>{{portStock.numOfShares}}</td>
+        <td>${{formatNumber(portStock.equity)}}</td>
+        <td>{{formatNumber(portStock.weight)}}%</td>
+    </tr>
+</tbody>
+</table>
+            <!-- Content Column -->
+          </div>
+        <button ng-click="addModal.openAdd()" class="addbutton addbutton2">Add</button>
+        </div><br>
+
+        <div id="workarea">
+  <div class="position">
+
+    <!--start button, nothing above this is necessary -->
+    <div class="svg-wrapper">
+      <svg height="40" width="150" xmlns="http://www.w3.org/2000/svg">
+        <rect id="shape" height="40" width="150"></rect>
+        </svg><div id="text">
+          <a href=""><span class="spot"></span>Button 1</a>
+        </div>
+
+    </div>
+    <!--Next button -->
+    <div class="svg-wrapper">
+      <svg height="40" width="150" xmlns="http://www.w3.org/2000/svg">
+        <rect id="shape" height="40" width="150"></rect>
+        </svg><div id="text">
+          <a href=""><span class="spot"></span>Button 2</a>
+        </div>
+
+    </div>
+    <!--Next button -->
+    <div class="svg-wrapper">
+      <svg height="40" width="150" xmlns="http://www.w3.org/2000/svg">
+        <rect id="shape" height="40" width="150"></rect>
+        </svg><div id="text">
+          <a href=""><span class="spot"></span>Button 3</a>
+        </div>
+
+    </div>
+    <!--End button -->
+
+  </div>
+  <a id="personal" href="http://www.tylermarkpeterson.com">www.tylermarkpeterson.com</a>
+</div>
+        <!-- /.container-fluid -->
+        <div style="text-align: center">
+          <p>Woah! Nice blend of tech and consumer stocks! Great return for the year.</p>
+            <p style="margin-top:20px"> --Cool_man560</p>
+            <label for="inp" class="inp">
+          <input type="text" id="inp" placeholder="&nbsp;">
+          <span class="label">Comments</span>
+          <span class="border"></span>
+<input type="submit" value="Submit"></label>
+</div>
+      </label>
+
+      </div>
+      <!-- End of Main Content -->
+
+      <div ng-show="browserPage">
+
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-bottom" id="sideNav">
+        </nav>
+
+        <div class="container-fluid p-0">
+
+          <section class="resume-section p-3 p-lg-5 d-flex align-items-center" id="about">
+            <div class="w-100">
+              <h1 class="mb-0">Browse
+                <span class="text-primary">Portfolios:</span>
+              </h1>
+              <hr>
+              <table>
+      <tbody><tr>
+              <th class="table-blue" width="20%">Picture</th>
+      <th class="table-blue" width="20%">Username</th>        
+      <th class="table-blue" width="20%">Stocks</th>
+      <th class="table-blue" width="20%">Return in Past Year</th>
+          </tr>
+          <tr>
+              <td><a class="navbar-brand js-scroll-trigger" href="#page-top">
+            <span class="d-block d-lg-none">Melissa Valdez</span>
+            <span class="d-none d-lg-block">
+              <img class="img-fluid img-profile rounded-circle mx-auto mb-2" src="https://i.ibb.co/BNkRFdk/Screen-Shot-2019-03-31-at-6-13-32-AM.png" alt="" width="70" height="70">
+            </span>
+          </a></td>
+      <td>melvaldez</td>
+
+      <td>11</td><td>27%</td>
+          </tr>
+          <tr>
+              <td><a class="navbar-brand js-scroll-trigger" href="#page-top">
+            <span class="d-block d-lg-none">Andrew Yu</span>
+            <span class="d-none d-lg-block">
+              <img class="img-fluid img-profile rounded-circle mx-auto mb-2" src="https://i.ibb.co/59Hn4FN/Screen-Shot-2019-03-31-at-7-06-49-AM.png" alt="" width="70" height="70">
+            </span>
+          </a></td>
+      <td>Andy39</td>
+
+      <td>4</td><td>19%</td>
+          </tr>
+          <tr>
+              <td><a class="navbar-brand js-scroll-trigger" href="#page-top">
+            <span class="d-block d-lg-none">Amir Asam</span>
+            <span class="d-none d-lg-block">
+              <img class="img-fluid img-profile rounded-circle mx-auto mb-2" src="https://i.ibb.co/9ZN7Cdz/Screen-Shot-2019-03-31-at-7-08-39-AM.png alt="" width="70" height="70">
+            </span>
+          </a></td>
+      <td>SuperAmir9</td>
+
+      <td>20</td><td>11%</td>
+          </tr>
+
+            <tr>
+              <td><a class="navbar-brand js-scroll-trigger" href="#page-top">
+            <span class="d-block d-lg-none">Elizabeth Himal</span>
+            <span class="d-none d-lg-block">
+              <img class="img-fluid img-profile rounded-circle mx-auto mb-2" src="https://i.ibb.co/b3trd45/Screen-Shot-2019-03-31-at-9-32-38-AM.png" alt="" width="70" height="70">
+            </span>
+          </a></td>
+      <td>Himal2</td>
+
+      <td>2</td><td>7%</td>
+          </tr>
+
+              <tr>
+              <td><a class="navbar-brand js-scroll-trigger" href="#page-top">
+            <span class="d-block d-lg-none">David Paronna</span>
+            <span class="d-none d-lg-block">
+              <img class="img-fluid img-profile rounded-circle mx-auto mb-2" src="https://i.ibb.co/cJNSs2R/Screen-Shot-2019-03-31-at-7-19-56-AM.png alt="" width="70" height="70">
+            </span>
+          </a></td>
+      <td>DavidParonna</td>
+
+      <td>16</td><td>17%</td>
+          </tr>
+
+      </tbody>
+      </table>
+
+            </div>
+          </section>
+        </div>
+      </div>
+
+<!-- Friends -->
+      <div ng-show="friendsPage">
+          <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-bottom" id="sideNav">
+          </nav>
+
+          <div class="container-fluid p-0">
+
+            <section class="resume-section p-3 p-lg-5 d-flex align-items-center" id="about">
+              <div class="w-100">
+                <h1 class="mb-0">Friends'
+                  <span class="text-primary">Portfolios:</span>
+                </h1>
+                <hr>
+                <table>
+        <tbody><tr>
+                <th class="table-blue" width="20%">Picture</th>
+        <th class="table-blue" width="20%">Username</th>
+                <th class="table-blue" width="20%">Number of Companies</th>
+        <th class="table-blue" width="20%">Return in Past Year</th>
+            </tr>
+            <tr>
+                <td><a class="navbar-brand js-scroll-trigger" href="#page-top">
+              <span class="d-block d-lg-none">Clarence Taylor</span>
+              <span class="d-none d-lg-block">
+                <img class="img-fluid img-profile rounded-circle mx-auto mb-2" src="img/profile.jpg" alt="" width="70" height="70">
+              </span>
+            </a></td>
+        <td>CT_BOI333</td>
+
+        <td>18</td><td>33%</td>
+            </tr>
+            <tr>
+                <td><a class="navbar-brand js-scroll-trigger" href="#page-top">
+              <span class="d-block d-lg-none">Clarence Taylor</span>
+              <span class="d-none d-lg-block">
+                <img class="img-fluid img-profile rounded-circle mx-auto mb-2" src="img/person.jpg" alt="" width="70" height="70">
+              </span>
+            </a></td>
+        <td>Cool_man560</td>
+
+        <td>7</td><td>13%</td>
+            </tr>
+            <tr>
+                <td><a class="navbar-brand js-scroll-trigger" href="#page-top">
+              <span class="d-block d-lg-none">Clarence Taylor</span>
+              <span class="d-none d-lg-block">
+                <img class="img-fluid img-profile rounded-circle mx-auto mb-2" src="img/dude.jpg" alt="" width="70" height="70">
+              </span>
+            </a></td>
+        <td>Typ_Guy555  </td>
+
+        <td>10</td><td>51%</td>
+            </tr>
+        </tbody>
+        </table>
+
+              </div>
+            </section>
+          </div>
+      </div>
+<!-- End Friends -->
+
+<!-- Begin Stock -->
+<add-modal model="addModal" avg-cost="$parent.avgCost" name="$parent.name" num-of-shares="$parent.numOfShares" ></add-modal>
+      <div ng-show="isStockPage" id="wrapper">
+        <div id="content-wrapper">
+
+          <div class="container-fluid">
+
+            <!-- Breadcrumbs-->
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item">
+                <a href="#">Dashboard</a>
+              </li>
+              <li class="breadcrumb-item active">Overview</li>
+            </ol>
+
+            <!-- Icon Cards-->
+            <div class="row">
+              <div class="col-xl-3 col-sm-6 mb-3">
+                <div class="card text-white bg-primary o-hidden h-100">Symbol: AAPL</div>
+              </div>
+              <div class="col-xl-3 col-sm-6 mb-3">
+                <div class="card text-white bg-primary o-hidden h-100">Price: $189.12</div>
+              </div>
+            </div>
+
+            <!-- Area Chart Example-->
+            <div class="card mb-3">
+              <div class="card-header">
+                <i class="fas fa-chart-area"></i>
+                Area Chart Example</div>
+              <div class="card-body"><div class="chartjs-size-monitor" style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;"><div class="chartjs-size-monitor-expand" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;"><div style="position:absolute;width:1000000px;height:1000000px;left:0;top:0"></div></div><div class="chartjs-size-monitor-shrink" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;"><div style="position:absolute;width:200%;height:200%;left:0; top:0"></div></div></div><div class="chartjs-size-monitor" style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;"><div class="chartjs-size-monitor-expand" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;"><div style="position:absolute;width:1000000px;height:1000000px;left:0;top:0"></div></div><div class="chartjs-size-monitor-shrink" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;"><div style="position:absolute;width:200%;height:200%;left:0; top:0"></div></div></div>
+                <canvas id="myAreaChart" width="1966" height="588" class="chartjs-render-monitor" style="display: block; height: 294px; width: 983px;"></canvas>
+              </div>
+              <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
+            </div>
+
+            <!-- DataTables Example -->
+            <div class="card mb-3">
+              <div class="card-header">
+                <i class="fas fa-table">Description</i></div>
+              <div class="card-body">Description goes here.</div>
+              <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
+            </div>
+
+          </div>
+          <!-- /.container-fluid -->
+
+          <!-- Sticky Footer -->
+          <footer class="sticky-footer">
+            <div class="container my-auto">
+              <div class="copyright text-center my-auto">
+                <span>Copyright © Your Website 2019</span>
+              </div>
+            </div>
+          </footer>
+
+        </div>
+        <!-- /.content-wrapper -->
+
+
+
+      <!-- Comments -->
+
+
+
+      <!-- Footer -->
+
+      <!-- End of Footer -->
+
+    </div>
+    <!-- End of Content Wrapper -->
+
+  </div>
+  <!-- End of Page Wrapper -->
+
+  <!-- Scroll to Top Button-->
+  <a class="scroll-to-top rounded" href="#page-top" style="display: none;">
+    <i class="fas fa-angle-up"></i>
+  </a>
+
+  <!-- Logout Modal-->
+  <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+          <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+          <a class="btn btn-primary" href="login.html">Logout</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap core JavaScript-->
+  <script src="vendor/jquery/jquery.min.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Core plugin JavaScript-->
+  <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+  <!-- Custom scripts for all pages-->
+  <script src="js/sb-admin-2.min.js"></script>
+
+  <!-- Page level plugins -->
+  <script src="vendor/chart.js/Chart.min.js"></script>
+
+  <!-- Page level custom scripts -->
+  <script src="js/demo/chart-area-demo.js"></script>
+  <script src="js/demo/chart-pie-demo.js"></script>
+
+  <!-- AddModal -->
+
+  <!-- Add Modal -->
+<script type="text/ng-template" id="addModal.html">
+  <div class="modal" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalStock" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addModalStock">Add a Stock</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form name = "AddStock">
+          <div class="form-group">
+            <label for="nameForStock">Stock Name:</label>
+            <input type="text" class="form-control" id="nameForStock" ng-model="name" ng-value="" placeholder="Stock Name">
+          </div>
+          <div class="form-group">
+            <label for="avgCost">Average Cost</label>
+            <input type="number" class="form-control" id="avgCost" ng-model="avgCost" placeholder="0">
+          </div>
+          <div class="form-group">
+            <label for="numOfShares">Number of Shares</label>
+            <input type="number" class="form-control" id="numOfShares" ng-model="numOfShares" placeholder="0">
+          </div>
+          </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-info" value = "submit" ng-click="$parent.addStock(name,numOfShares,avgCost)">Add Stock</button>
+      </div>
+    </div>
+  </div>
+  </div>
+  </script>
+
+
+</body>
+
+</html>
