@@ -1,4 +1,4 @@
-# Social-Investing
+# Project: Social-Investing
 LA Hacks (2019)
 
 Used with third party libraries, such as BlackRock API, Yahoo Finance API, and Google Cloud Platform.
